@@ -4,7 +4,7 @@
         <meta charset="utf-8"> 
         <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
 
-        <title>Example Student's HCDE 439 Physical Computing Page!</title> 
+        <title>Michael Wentworth - HCDE 439</title> 
 
         <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
 
@@ -12,13 +12,47 @@
     <body> 
 
         <div class="header">
-            <h1>Example Student's Assignment 2!</h1>
+            <h1>Michael Wentworth's Assignment 2!</h1>
             <p>
-            <img src="red-panda.jpg" width=400></a>
+            <img src="A2Circuit.jpg" width=800></a>
             </p>
             <p>
-            Here is all the documentation for assignment 2!
+            Circuit for Assignment 2
             </p>
+            <br>
+
+            <p>
+            <img src="A2Gif.gif" width=800></a>
+            </p>
+            <p>
+            Above circuit in action. When the button is pressed, the blue LED activates, and the two RGB LEDs cycle first through red values 0-255, then the same for green, and then for blue LEDs.
+            </p>
+            <br>
+
+            <p>
+            <img src="A2Schematic.jpg" width=800></a>
+            </p>
+            <p>
+            Schematic for the above circuit. Resistor values were chosen using Ohm's Law (Calculations shown below)
+            </p>
+            <br>
+
+            <p>
+            <img src="A2Calculations.jpg" width=800></a>
+            </p>
+            <p>
+            Calculations for the resistor values in the circuit. 10K Ohms of resistance was chosen for the button switch simply because this is a general value for a pull-up resistor and was used in the in class examples. Ohms Law was used to calculate resistor values for the red, green, and blue LEDs. Since red LEDs and green LEDs have a voltage drop of 1.8V and have a desired current of 20 mA, the desired resistor value calculates to 160 Ohms, but 220 Ohms is the closest resistor, so they are used for R2, R5, R3, and R6. For the three blue LEDs, they have a voltage drop of 3.3V and a desired current of 20 mA, the desired resistor value calculates to 85 Ohms, but 100 Ohms is the closest resistor, so they are used for R4, R7, and R8.
+            </p>
+            <br>
+
+
+            <p>
+            <img src="A2Code.png" width=800></a>
+            </p>
+            <p>
+            Code for the Arduino Circuit
+            </p>
+            <br>
         </div>
         
     </body>
