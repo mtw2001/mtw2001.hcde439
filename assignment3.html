@@ -1,0 +1,59 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>Michael Wentworth - HCDE 439</title> 
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head> 
+    <body> 
+
+        <div class="header">
+            <h1>Michael Wentworth's Assignment 3!</h1>
+            <p>
+            <img src="A3Circuit.jpg" width=800></a>
+            </p>
+            <p>
+            Circuit for Assignment 3
+            </p>
+            <br>
+
+            <p>
+            <img src="A3Gif.gif" width=800></a>
+            </p>
+            <p>
+            Above circuit in action. When light hits the photoresistor, the blue LED will turn on with varying brightness corresponding to how much light is detected. When light, in excess of the ambient lighting in the room, is blocked, the LED will turn off.
+            </p>
+            <br>
+
+            <p>
+            <img src="A3Schematic.jpg" width=800></a>
+            </p>
+            <p>
+            Schematic for the above circuit. Resistor values were chosen using Ohm's Law (Calculations shown below)
+            </p>
+            <br>
+
+            <p>
+            <img src="A3Calculations.jpg" width=800></a>
+            </p>
+            <p>
+            Calculations for the resistor values in the circuit. 10K Ohms of resistance was chosen for the button switch simply because this is a general value for a pull-down resistor and was used in the in class examples. Ohms Law was used to calculate resistor values for blue LED. Blue LEDs have a voltage drop of 3.3V and a desired current of 20 mA, the desired resistor value calculates to 85 Ohms, but 100 Ohms is the closest resistor, so this value is used for R2
+            </p>
+            <br>
+
+
+            <p>
+            <img src="A3Code.png" width=800></a>
+            </p>
+            <p>
+            Code for the Arduino Circuit. Input values from A0 (at the voltage divider) vary between 0 and 1023, typically around 400-600 depending on ambient lighting. These values are mapped to a 0-255 scale using the map() function in Arduino. This allows the value to be used as an analog output for the blue LED that varies the brightness of the LED based on how much light is detected by the photoresistor.
+            </p>
+            <br>
+        </div>
+        
+    </body>
+</html>
