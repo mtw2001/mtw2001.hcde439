@@ -1,0 +1,92 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>Michael Wentworth - HCDE 439</title> 
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head> 
+    <body> 
+
+        <div class="header">
+            <h1>Michael Wentworth's Assignment 4!</h1>
+            <p>
+            <img src="A4Circuit.jpg" width=800></a>
+            </p>
+            <p>
+            Circuit for Assignment 4
+            </p>
+            <br>
+
+            <p>
+            <img src="A4Gif.gif" width=800></a>
+            </p>
+            <p>
+            Above circuit in action. The servo motor changes corresponding to the position of the joystick. The two components point in the same direction, but the servo motor has only 180 degrees of movement, so positive and negative y values on the joystick are treated as the same.
+            </p>
+            <br>
+
+            <p>
+            <img src="A4Schematic.jpg" width=800></a>
+            </p>
+            <p>
+            Schematic for the above circuit. The top schematic is for the joystick component and the bottom schematic is for the servo motor component.
+            </p>
+            <br>
+
+            <style>
+            code {
+                font-family: Consolas,"courier new";
+                color: grey;
+                background-color: #f1f1f1;
+                padding: 2px;
+                font-size: 105%;
+            }
+            </style>
+            <code> 
+                #include &#60;Servo.h&#62; // uses Servo library<br>
+                #include &#60;math.h&#62; // uses math library<br><br>
+
+                int x = A0; // pin for x direction on joystick<br>
+                int y = A1; // pin for y direction on joystick<br>
+                double xval = 0; // current value/position of joystick, x-axis<br>
+                double yval = 0; // current value/position of joystick, y-axis<br>
+                double angle = 0.00; // current angle between xval and yval<br>
+                const double pi = 3.1415926535897932384626433832795; // constant for pi<br><br>
+
+                Servo myServo;  // create a servo object<br><br>
+
+                void setup() {<br>
+                    &emsp;myServo.attach(9); // attaches the servo on pin 9 to the servo object<br>
+                }<br><br>
+
+                void loop() {<br>
+                    &emsp;xval = analogRead(x); // gets position of joystick on x-axis (0-1023)<br>
+                    &emsp;xval = map(xval, 0, 1023, -100.00, 100.00); // converts value to be from -100 to 100<br>
+                    &emsp;yval = analogRead(y); // gets position of joystick on y-axis (0-1023)<br>
+                    &emsp;yval = map(yval, 0, 1023, -100.00, 100.00); // converts value to be from -100 to 100<br><br>
+
+
+                    &emsp;double angle = atan2(yval, xval); // calculates angle of the joystick<br>
+                    &emsp;angle = (angle / pi) * 180; // converts angle from radians to degrees<br><br>
+
+                    &emsp;// resting value for joystick is slightly off, so this "if" statement accounts<br>
+                    &emsp;// for possible errors when joystick is not being touched<br>
+                    &emsp;if (xval >= -3 && xval <= 3 && yval >= -3 && yval <= 3) { // if within error values<br>
+                        &emsp;&emsp;myServo.write(90); // default position is set to 90 degrees<br>
+                    &emsp;} else { // if outside of error resting conditions<br>
+                        &emsp;&emsp;myServo.write(abs(angle)); // sets servo to absolute value of calculated angle<br>
+                    &emsp;}<br>
+                }<br>
+            </code>
+            <br>
+            <p>
+            Code for the Arduino Circuit. Values of x and y position are constantly taken from the joystick component, and calibrated to be between -100 and 100. From there, the angular position of the joystick is calculated and sent to the servo motor, which is set to the same angle. The joystick has some error, especially when it is in its resting position, so a buffer of 6 in both the x and y direction is added to ensure that the servo is set to 90 degrees when the joystick is resting.
+            </p>
+        </div>
+        
+    </body>
+</html>
