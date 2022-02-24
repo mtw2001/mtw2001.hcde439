@@ -1,0 +1,120 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>Michael Wentworth - HCDE 439</title> 
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head> 
+    <body> 
+
+        <div class="header">
+            <h1>Michael Wentworth's Assignment 5!</h1>
+            <p>
+            <img src="A5Circuit.jpg" width=800></a>
+            </p>
+            <p>
+            Circuit for Assignment 5
+            </p>
+            <br>
+
+            <p>
+            <img src="A5Gif.gif" width=800></a>
+            </p>
+            <p>
+            Above circuit in action. The LED light strip turns on or off when the power button is pressed on the remote. Using the up and down arrow buttons adjusts the brightness of the LEDs.
+            </p>
+            <br>
+
+            <p>
+            <img src="A5Schematic.jpeg" width=800></a>
+            </p>
+            <p>
+            Schematic for the above circuit. The larger schematic is for the LED strips and MOSFET transistor components. The transistor's resistance is controlled through pin 5 on the Arduino, and the circuit is powered by an external 12V power supply. The smaller schematic is for the Infrared Receiver Module, which allows the remote control to communicate with the Arduino to control the voltage to the transistor.
+            </p>
+            <br>
+
+            <p>
+            <img src="A5Calculations.jpeg" width=800></a>
+            </p>
+            <p>
+            Calculations of interest for the circuit.
+            </p>
+            <br>
+
+            <style>
+            code {
+                font-family: Consolas,"courier new";
+                color: grey;
+                background-color: #f1f1f1;
+                padding: 2px;
+                font-size: 105%;
+            }
+            </style>
+            <code> 
+                #include &#60;IRremote.h&#62; // Library for using IR Sensor/Remote<br><br>
+
+                // IRremote Code was taken from the tutorial linked in lecture, so much of this code<br>
+                // was provided there, and I am not 100% sure what some of it does exactly, but I will<br>
+                // try my best to describe what is happening.<br><br>
+
+                const int RECV_PIN = 7; // Input pin for IR Sensor<br>
+                const int MOSFET_PIN = 5; // Output pin for MOSFET Transistor Gate<br>
+                int BRIGHTNESS = 255; // Analog value for brightness of LED Strip, initializes to 255<br>
+                int ON_OFF = 0; // LED Power, 0 = Off, 1 = On<br>
+                IRrecv irrecv(RECV_PIN); // Sets IR Receiver object to receive from RECV_PIN<br>
+                decode_results results; // Decodes input from IR Sensor<br>
+                unsigned long key_value = 0;<br><br>
+
+                void setup(){<br>
+                    &emsp;pinMode(MOSFET_PIN, OUTPUT);<br>
+                    &emsp;irrecv.enableIRIn();<br>
+                    &emsp;irrecv.blink13(true);<br>
+                }<br><br>
+
+                void loop(){<br>
+                    &emsp;if (irrecv.decode(&results)){ // If receives results<br><br>
+ 
+                        &emsp;&emsp;if (results.value == 0XFFFFFFFF) // Code for if button is held<br>
+                            &emsp;&emsp;&emsp;results.value = key_value; // sets result to last input<br><br>
+
+                        &emsp;&emsp;switch(results.value){<br>
+                            &emsp;&emsp;&emsp;case 0xFFA25D: // code for power button being pressed<br>
+                            &emsp;&emsp;&emsp;if (ON_OFF == 0) { // if LEDs are off<br>
+                                &emsp;&emsp;&emsp;&emsp;ON_OFF = 1; // set ON_OFF to on<br>
+                                &emsp;&emsp;&emsp;&emsp;analogWrite(MOSFET_PIN, BRIGHTNESS); // Turn on LEDs to current brightness<br>
+                            &emsp;&emsp;&emsp;} else { // if LEDs are off<br>
+                                &emsp;&emsp;&emsp;&emsp;ON_OFF = 0; // set ON_OFF to off<br>
+                                &emsp;&emsp;&emsp;&emsp;analogWrite(MOSFET_PIN, 0); // turn off LEDs<br>
+                            &emsp;&emsp;&emsp;}<br>
+                            &emsp;&emsp;&emsp;delay(100); // waits 100 ms<br>
+                            &emsp;&emsp;&emsp;break; // Move to next case<br>
+                            &emsp;&emsp;&emsp;case 0xFFE01F: // Code for down button being pressed<br>
+                            &emsp;&emsp;&emsp;if (BRIGHTNESS > 5 && ON_OFF == 1) { // If brightness greater than 5 and LEDs on<br>
+                                &emsp;&emsp;&emsp;&emsp;BRIGHTNESS -= 10; // decrease brightness by 10<br>
+                                &emsp;&emsp;&emsp;&emsp;analogWrite(MOSFET_PIN, BRIGHTNESS); // set LEDs to new value<br>
+                            &emsp;&emsp;&emsp;}<br>
+                            &emsp;&emsp;&emsp;break; // Move to next case<br>
+                            &emsp;&emsp;&emsp;case 0xFF906F: // Case for up button being pressed<br>
+                            &emsp;&emsp;&emsp;if (BRIGHTNESS < 255 && ON_OFF == 1) { // &emsp;&emsp;&emsp;If brightness less than 255 and LEDs on<br>
+                                &emsp;&emsp;&emsp;&emsp;BRIGHTNESS += 10; // increase brightness by 10<br>
+                                &emsp;&emsp;&emsp;&emsp;analogWrite(MOSFET_PIN, BRIGHTNESS); // set LEDs to new value<br>
+                            &emsp;&emsp;&emsp;}<br>
+                            &emsp;&emsp;&emsp;break ; // done testing cases<br>
+                        &emsp;&emsp;}<br>
+                        &emsp;&emsp;key_value = results.value; // sets key_value to current button pressed<br>
+                        &emsp;&emsp;irrecv.resume(); <br>
+                    &emsp;}<br>
+                }<br>
+            </code>
+            <br>
+            <p>
+            Code for the Arduino Circuit. Input is constantly collected from the IR sensor and remote and translated into instructions for the Arduino. Important variables are ON_OFF, which states whether the LEDs should be on or off and BRIGHTNESS which is a value between 5 and 255 which determines the brightness of the LED lights.
+            </p>
+        </div>
+        
+    </body>
+</html>
