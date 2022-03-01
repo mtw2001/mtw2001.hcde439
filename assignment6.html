@@ -1,0 +1,188 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <meta charset="utf-8"> 
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>Michael Wentworth - HCDE 439</title> 
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head> 
+    <body> 
+
+        <div class="header">
+            <h1>Michael Wentworth's Assignment 6!</h1>
+            <p>
+            <img src="A6Circuit.jpg" width=800></a>
+            </p>
+            <p>
+            Circuit for Assignment 6
+            </p>
+            <br>
+
+            <p>
+            <img src="A6Gif.gif" width=800></a>
+            </p>
+            <p>
+            Above circuit in action. The joystick's position draws a line on the webpage, similar to an Etch A Sketch. Pressing the space bar clears the previously drawn lines and makes the blue LED blink 3 times.
+            </p>
+            <br>
+
+            <p>
+            <img src="A6Schematic.jpeg" width=800></a>
+            </p>
+            <p>
+            Schematic for the above circuit. Schematic on the left is for the blue LED, with a 100 ohms resistor, attached to pin 8. Schematic on the right is for the joystick controls for the webpage. The x value is attached to pin A0, and y value is attached to pin A1.
+            <br>
+
+            <style>
+            code {
+                font-family: Consolas,"courier new";
+                color: grey;
+                background-color: #f1f1f1;
+                padding: 2px;
+                font-size: 105%;
+            }
+            </style>
+            <code> 
+                const int x = A0; // joystick x pin<br>
+                const int y = A1; // joystick y pin<br>
+                int xval = 0; // initalizes xval to 0<br>
+                int yval = 0; // initalizes yval to 0<br><br>
+    
+                void setup() {<br>
+                    &emsp;Serial.begin(9600); // begins serial communication<br>
+                    &emsp;Serial.setTimeout(10); // sets timeout for parseInt<br>
+                    &emsp;pinMode(8, OUTPUT); // sets pin 8 to output<br>
+                }<br><br>
+
+                void loop() {<br>
+                    &emsp;xval = analogRead(x); // reads xval from joystick<br>
+                    &emsp;if (xval == 502 || xval == 501) { // calibration to keep joystick centered<br>
+                        &emsp;&emsp;xval = 512; // calibration to keep joystick centered<br>
+                    &emsp;}<br>
+                    &emsp;yval = analogRead(y);<br>
+                    &emsp;if (yval == 511 || yval == 512) { // calibration to keep joystick centered<br>
+                        &emsp;&emsp;yval = 512; // calibration to keep joystick centered<br>
+                    &emsp;}<br>
+                    &emsp;Serial.print("["); // creates array on serial<br>
+                    &emsp;Serial.print(yval); // creates array on serial<br>
+                    &emsp;Serial.print(","); // creates array on serial<br>
+                    &emsp;Serial.print(xval); // creates array on serial<br>
+                    &emsp;Serial.println("]"); // creates array on serial<br><br>
+
+                    &emsp;if (Serial.available() > 0) {   // if there's serial data <br>
+                        &emsp;&emsp;int inByte = Serial.read(); // read it<br>
+                        &emsp;&emsp;Serial.write(inByte);   // send it back out as raw binary data<br>
+                        &emsp;&emsp;for (int i = 0; i < 3; i++) { // repeats loop 3 times<br>
+                            &emsp;&emsp;&emsp;digitalWrite(8, HIGH); // sets pin 8 to high<br>
+                            &emsp;&emsp;&emsp;delay(50); // waits<br>
+                            &emsp;&emsp;&emsp;digitalWrite(8, LOW); // sets pin 8 to low<br>
+                            &emsp;&emsp;&emsp;delay(50); // waits<br>
+                        &emsp;&emsp;}<br>
+                    &emsp;}<br>
+                    &emsp;delay(50); // waits<br>
+                }<br>
+            </code>
+            <br>
+            <p>
+            Code for the Arduino Circuit. X and Y position of the joystick is sent through an array to the p5 page. Calibration of the joystick is used to make sure that the joystick reads a constant value when it is at rest. Arduino also takes input from the p5 page, specifically if the spacebar is pressed. When pressed, pin 8 is set to high and then low three times, causing the blue LED to blink.
+            </p>
+
+            <style>
+            code {
+                font-family: Consolas,"courier new";
+                color: grey;
+                background-color: #f1f1f1;
+                padding: 2px;
+                font-size: 105%;
+            }
+            </style>
+            <code> 
+                var serial; // variable to hold an instance of the serialport library<br>
+                var portName = '/dev/tty.usbmodem14201' //rename to the name of your port<br>
+                var dataarray = []; //some data coming in over serial!<br>
+                var xOld = 600; // start position for the line<br>
+                var yOld = 375; // start position for the line<br><br>
+
+                function setup() {<br>
+                    &emsp;serial = new p5.SerialPort();       // make a new instance of the serialport library<br>
+                    &emsp;serial.on('list', printList);       // set a callback function for the serialport list event<br>
+                    &emsp;serial.on('connected', serverConnected); // callback for connecting to the server<br>
+                    &emsp;serial.on('open', portOpen);        // callback for the port opening<br>
+                    &emsp;serial.on('data', serialEvent);     // callback for when new data arrives<br>
+                    &emsp;serial.on('error', serialError);    // callback for errors<br>
+                    &emsp;serial.on('close', portClose);      // callback for the port closing<br><br>
+ 
+                    &emsp;serial.list();                      // list the serial ports<br>
+                    &emsp;serial.open(portName);              // open a serial port<br><br>
+  
+                    &emsp;createCanvas(1200, 750); // creates canvas 1200 x 750<br>
+                    &emsp;background(51); // sets background color to gray<br>
+                }<br><br>
+ 
+                // get the list of ports:<br>
+                function printList(portList) {<br>
+                    &emsp;// portList is an array of serial port names<br>
+                    &emsp;for (var i = 0; i < portList.length; i++) {<br>
+                    &emsp;// Display the list the console:<br>
+                        &emsp;&emsp;print(i + " " + portList[i]);<br>
+                    &emsp;}<br>
+                }<br><br>
+
+                function serverConnected() {<br>
+                    &emsp;print('connected to server.');<br>
+                }<br><br>
+ 
+                function portOpen() {<br>
+                    &emsp;print('the serial port opened.')<br>
+                }<br><br>
+ 
+                function serialError(err) {<br>
+                    &emsp;print('Something went wrong with the serial port. ' + err);<br>
+                }<br><br>
+ 
+                function portClose() {<br>
+                    &emsp;print('The serial port closed.');<br>
+                }<br><br>
+
+                function serialEvent() {<br>
+                    &emsp;if (serial.available()) {<br>
+                        &emsp;&emsp;var datastring = serial.readLine(); // readin some serial<br>
+                        &emsp;&emsp;var newarray; <br>
+                        &emsp;&emsp;try {<br>
+                            &emsp;&emsp;&emsp;newarray = JSON.parse(datastring); // can we parse the serial<br>
+                        &emsp;&emsp;} catch(err) {<br>
+                            &emsp;&emsp;&emsp;//console.log(err);<br>
+                        &emsp;&emsp;}<br>
+                        &emsp;&emsp;if (typeof(newarray) == 'object') { // if newarray is object<br>
+                            &emsp;&emsp;&emsp;dataarray = newarray; // sets dataarray to the incoming array<br>
+                        &emsp;&emsp;}<br>
+                        &emsp;&emsp;console.log("got back " + datastring); // logs to console<br>
+                    &emsp;} <br>
+                }<br><br>
+
+                function keyPressed() { // if a key is pressed<br>
+                    &emsp;if (keyCode === 32) { // if key is space bar<br>
+                        &emsp;&emsp;clear(); // clear canvas<br>
+                        &emsp;&emsp;background(51); // reset background color<br>
+                        &emsp;&emsp;serial.write(key); // write key to arduino<br>
+                    &emsp;}<br>
+                }<br><br>
+
+                function draw() {<br>
+                    &emsp;xPos = map(dataarray[0], 0, 1023, 0, 1200); // maps x position from joystick to canvas size<br>
+                    &emsp;yPos = map(dataarray[1], 0, 1023, 750, 0); // maps y position form joystick to canvas size<br>
+                    &emsp;line(xOld, yOld, xPos, yPos) // draws line from old position to new position<br>
+                    &emsp;xOld = xPos; // updates old position<br>
+                    &emsp;yOld = yPos; // updates old position<br>
+                }<br>
+            </code>
+            <br>
+            <p>
+                Code for the p5 page. a 1200x750 canvas is created with a gray color. A line is drawn starting at the center, to wherever the joystick is located. Then, another line is drawn from the previous joystick position to the new position and so on until the spacebar is pressed. When it is pressed, the canvas is cleared, but the previous position of the joystick is not, creating an effect similar to an Etch A Sketch. When the spacebar is pressed, serial data is sent to Arduino, causing the LED to blink.
+            </p>
+        </div>
+    </body>
+</html>
